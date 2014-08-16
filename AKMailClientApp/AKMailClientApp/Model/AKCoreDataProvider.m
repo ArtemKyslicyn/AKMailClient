@@ -208,27 +208,6 @@
     return results;
 }
 
--(void)saveNewMailArrayToDB:(NSArray*)msgArray{
-    
-    for (int i = 0; i< [msgArray count]; i++) {
-        
-        MCOIMAPMessage *msg = [msgArray objectAtIndex:i];
-        
-        NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
-        AKMailMessage *mailMessage = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:self.managedObjectContext];
-        
-        mailMessage.from = msg.header.sender.displayName;
-        //mailMessage.to = msg.header.to;
-        mailMessage.subject = msg.header.subject;
-        mailMessage.uid =  [NSNumber numberWithUnsignedInt: [msg uid]];
-        mailMessage.recivedData = msg.header.receivedDate;
-        NSLog(@"description %@",msg.header.description);
-        
-    
-    }
-    [self saveContext];
-}
-
 
 
 - (BOOL)coreDataHasEntriesForEntityName:(NSString *)entityName {
@@ -254,6 +233,16 @@
     return [[self coreDataEntriesForEntityName:@"AKMailMessage"] count];
 }
 
+-(NSArray*)arrayOfMailsInCoreData{
+    return [self coreDataEntriesForEntityName:@"AKMailMessage"];
+}
+
+-(void)removeAllMailInDB{
+    
+    [self removeAllEntityName:@"AKMailMessage" withPredicate:nil];
+    [self saveContext];
+}
+
 -(AKMailMessage*)getMessageForManagedID:(NSManagedObjectID*)uid{
     NSError * error = nil;
     
@@ -267,5 +256,24 @@
     return mailObject;
 }
 
+-(void)saveNewMailArrayToDB:(NSArray*)msgArray{
+    
+    for (int i = 0; i< [msgArray count]; i++) {
+        
+        MCOIMAPMessage *msg = [msgArray objectAtIndex:i];
+        
+        NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
+        AKMailMessage *mailMessage = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:self.managedObjectContext];
+        
+        mailMessage.from = msg.header.sender.displayName;
+        mailMessage.subject = msg.header.subject;
+        mailMessage.uid =  [NSNumber numberWithUnsignedInt: [msg uid]];
+        mailMessage.recivedData = msg.header.receivedDate;
+        NSLog(@"description %@",msg.header.description);
+        
+        
+    }
+    [self saveContext];
+}
 
 @end

@@ -21,6 +21,8 @@
 - (void)saveNewMailArrayToDB:(NSArray*)msgArray;
 - (BOOL)isMailMessagesPresentInDB;
 - (NSInteger)countOfMailsInCoreData;
--(AKMailMessage*)getMessageForManagedID:(NSManagedObjectID*)uid;
+- (AKMailMessage*)getMessageForManagedID:(NSManagedObjectID*)uid;
+- (void)removeAllMailInDB;
+- (NSArray*)arrayOfMailsInCoreData;
 
 @end

@@ -51,8 +51,7 @@
 	// Do any additional setup after loading the view, typically from a nib.
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
 
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
-    self.navigationItem.rightBarButtonItem = addButton;
+    
     self.detailViewController = (AKMailDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     
     self.refreshControl = [[UIRefreshControl alloc] init];
@@ -218,7 +217,7 @@
         }
       
     } fail:^(NSError *fail) {
-      
+         [self.refreshControl endRefreshing];
     }];
     
 }
@@ -231,11 +230,6 @@
 }
 
 #pragma mark - control Actions
-
-- (void)insertNewObject:(id)sender{
-    
-    
-}
 
 -(void)refresh:(id)sender{
     [self syncMailOperation];

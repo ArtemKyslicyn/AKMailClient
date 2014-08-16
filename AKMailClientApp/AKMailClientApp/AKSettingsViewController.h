@@ -12,7 +12,7 @@ extern NSString * const UsernameKey;
 extern NSString * const PasswordKey;
 extern NSString * const HostnameKey;
 extern NSString * const FetchFullMessageKey;
-extern NSString * const OAuthEnabledKey;
+
 
 @protocol AKSettingsViewControllerDelegate;
 
@@ -22,7 +22,7 @@ extern NSString * const OAuthEnabledKey;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UITextField *hostnameTextField;
 @property (weak, nonatomic) IBOutlet UISwitch *fetchFullMessageSwitch;
-@property (weak, nonatomic) IBOutlet UISwitch *useOAuth2Switch;
+
 
 @property (nonatomic, weak) id<AKSettingsViewControllerDelegate> delegate;
 - (IBAction)done:(id)sender;

@@ -22,17 +22,13 @@ static NSString * kDefaultMailBoxFolder = @"INBOX";
     if(self){
         self.imapSession = [[MCOIMAPSession alloc] init];
       
-        [self setIMAPUserAccountSettingsHostName:@"imap.gmail.com" port:993 username:@"tork.the.knight@gmail.com" password:@"arcilitetorkq7042572"];
+        
         
         self.requestKind = (MCOIMAPMessagesRequestKindHeaders | MCOIMAPMessagesRequestKindStructure |
                             MCOIMAPMessagesRequestKindInternalDate | MCOIMAPMessagesRequestKindHeaderSubject |
                             MCOIMAPMessagesRequestKindFlags);
         self.folder = kDefaultMailBoxFolder;
-        //[self getAllIMAPMailHeaders];
-        
-      
-        
-       
+              
     }
     
     return self;
@@ -54,7 +50,7 @@ static NSString * kDefaultMailBoxFolder = @"INBOX";
     MCOIMAPFolderInfoOperation *inboxFolderInfo = [self.imapSession folderInfoOperation:self.folder];
     [inboxFolderInfo start:^(NSError *error, MCOIMAPFolderInfo *info)
      {
-         self.totalNumberOfInboxMessages = [info messageCount]-1;
+         self.totalNumberOfInboxMessages = [info messageCount];
          
          int countOfNewMessages =  self.totalNumberOfInboxMessages - сountCoreDataMail;
          MCORange range = MCORangeMake(countOfNewMessages,  self.totalNumberOfInboxMessages);

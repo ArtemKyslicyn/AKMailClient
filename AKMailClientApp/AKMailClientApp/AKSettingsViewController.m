@@ -13,36 +13,41 @@ NSString * const UsernameKey = @"username";
 NSString * const PasswordKey = @"password";
 NSString * const HostnameKey = @"hostname";
 NSString * const FetchFullMessageKey = @"FetchFullMessageEnabled";
-NSString * const OAuthEnabledKey = @"OAuth2Enabled";
 
-@implementation AKSettingsViewController
+@implementation AKSettingsViewController{
+    NSString * _email;
+}
 
 - (void)done:(id)sender {
     [[NSUserDefaults standardUserDefaults] setObject:self.emailTextField.text ?: @"" forKey:UsernameKey];
     [[FXKeychain defaultKeychain] setObject:self.passwordTextField.text ?: @"" forKey:PasswordKey];
     [[NSUserDefaults standardUserDefaults] setObject:self.hostnameTextField.text ?: @"" forKey:HostnameKey];
     [[NSUserDefaults standardUserDefaults] setBool:[self.fetchFullMessageSwitch isOn] forKey:FetchFullMessageKey];
-    [[NSUserDefaults standardUserDefaults] setBool:[self.useOAuth2Switch isOn] forKey:OAuthEnabledKey];
+
+    if (_email != self.emailTextField.text) {
+        [[AKModel sharedManager].dataSource removeAllMailInDB];
+    }
     
-    //[self.delegate settingsViewControllerFinished:self];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = @"Settings";
-    
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                                target:self
-                                                                                action:@selector(done:)];
-    self.navigationItem.rightBarButtonItem = doneButton;
-    
-    self.view.backgroundColor = [UIColor lightGrayColor];
-    self.emailTextField.text = [[NSUserDefaults standardUserDefaults] stringForKey:UsernameKey];
-    self.passwordTextField.text = [[FXKeychain defaultKeychain] objectForKey:PasswordKey];
-    self.hostnameTextField.text = [[NSUserDefaults standardUserDefaults] stringForKey:HostnameKey];
-    self.fetchFullMessageSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey:FetchFullMessageKey];
-    self.useOAuth2Switch.on = [[NSUserDefaults standardUserDefaults] boolForKey:OAuthEnabledKey];
+    self.title = NSLocalizedString(@"Settings",@"");
+  
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    _email = [[NSUserDefaults standardUserDefaults] stringForKey:UsernameKey];
+    self.emailTextField.text = _email;
+    self.passwordTextField.text = [[FXKeychain defaultKeychain] objectForKey:PasswordKey];
+    NSString *hostName = [[NSUserDefaults standardUserDefaults] stringForKey:HostnameKey];
+    if (hostName) {
+        self.hostnameTextField.text = hostName;
+    }
+   
+    self.fetchFullMessageSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey:FetchFullMessageKey];
+    
+}
 @end
