@@ -37,7 +37,7 @@
     
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
     if (coordinator != nil) {
-        _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         [_managedObjectContext setPersistentStoreCoordinator:coordinator];
     }
     return _managedObjectContext;
@@ -259,18 +259,19 @@
 -(void)saveNewMailArrayToDB:(NSArray*)msgArray{
     
     for (int i = 0; i< [msgArray count]; i++) {
-        
-        MCOIMAPMessage *msg = [msgArray objectAtIndex:i];
-        
-        NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
-        AKMailMessage *mailMessage = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:self.managedObjectContext];
-        
-        mailMessage.from = msg.header.sender.displayName;
-        mailMessage.subject = msg.header.subject;
-        mailMessage.uid =  [NSNumber numberWithUnsignedInt: [msg uid]];
-        mailMessage.recivedData = msg.header.receivedDate;
-        NSLog(@"description %@",msg.header.description);
-        
+       
+        @autoreleasepool {
+            MCOIMAPMessage *msg = [msgArray objectAtIndex:i];
+            
+            NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
+            AKMailMessage *mailMessage = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:self.managedObjectContext];
+            
+            mailMessage.from = msg.header.sender.displayName;
+            mailMessage.subject = msg.header.subject;
+            mailMessage.uid =  [NSNumber numberWithUnsignedInt: [msg uid]];
+            mailMessage.recivedData = msg.header.receivedDate;
+            NSLog(@"description %@",msg.header.description);
+        }
         
     }
     [self saveContext];

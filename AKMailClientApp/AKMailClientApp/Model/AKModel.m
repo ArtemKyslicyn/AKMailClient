@@ -35,7 +35,8 @@ static id _sharedInstance;
     if (self = [super init]) {
         _dataSource  = [AKCoreDataProvider new];
         _mailManager = [AKMailManager new];
-        //[self syncInbox];
+        _recahbility = [Reachability reachabilityWithHostname:@"www.google.com"];
+        
     }
     return self;
 }

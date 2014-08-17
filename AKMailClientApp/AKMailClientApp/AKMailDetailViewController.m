@@ -43,21 +43,25 @@
             
         }else{
             
-            [[AKModel sharedManager].mailManager getMailHTMLBodyForMessageUID:[self.messageItem.uid unsignedIntValue] complete:^(NSString *msgHTMLBody) {
-                
-                AKMailMessage * mailMessage = [[AKModel sharedManager].dataSource getMessageForManagedID:self.messageItem.objectID]; //We get current context mananged object
-                
-                NSLog(@"HTML %@",msgHTMLBody);
-                mailMessage.htmlBody = msgHTMLBody;
-                NSLog(@"HTML %@",self.messageItem.htmlBody);
-                
-               [[AKModel sharedManager].dataSource saveContext];
-               [self.webView loadHTMLString: mailMessage.htmlBody baseURL:nil];
-                
-            } fail:^(NSError *error) {
-                
-                
-            }];
+            if ([AKModel sharedManager].recahbility.isReachable) {
+               
+                [[AKModel sharedManager].mailManager getMailHTMLBodyForMessageUID:[self.messageItem.uid unsignedIntValue] complete:^(NSString *msgHTMLBody) {
+                    
+                    AKMailMessage * mailMessage = [[AKModel sharedManager].dataSource getMessageForManagedID:self.messageItem.objectID]; //We get current context mananged object
+                    
+                    NSLog(@"HTML %@",msgHTMLBody);
+                    mailMessage.htmlBody = msgHTMLBody;
+                    NSLog(@"HTML %@",self.messageItem.htmlBody);
+                    
+                    [[AKModel sharedManager].dataSource saveContext];
+                    [self.webView loadHTMLString: mailMessage.htmlBody baseURL:nil];
+                    
+                } fail:^(NSError *error) {
+                    
+                    
+                }];
+            }
+            
         }
     }
     

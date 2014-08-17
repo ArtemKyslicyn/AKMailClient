@@ -36,6 +36,7 @@
 		6AD5D79B199E70E000AF402E /* AKMailMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 6AD5D79A199E70E000AF402E /* AKMailMessage.m */; };
 		6AD5D79E199FAC9200AF402E /* AKSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6AD5D79D199FAC9200AF402E /* AKSettingsViewController.m */; };
 		6AD5D7A2199FAE1200AF402E /* FXKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 6AD5D7A1199FAE1200AF402E /* FXKeychain.m */; };
+		6AD5D7AA19A0ECFB00AF402E /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 6AD5D7A919A0ECFB00AF402E /* Reachability.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,6 +133,8 @@
 		6AD5D79D199FAC9200AF402E /* AKSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKSettingsViewController.m; sourceTree = "<group>"; };
 		6AD5D7A0199FAE1200AF402E /* FXKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FXKeychain.h; path = Common/FXKeychain.h; sourceTree = "<group>"; };
 		6AD5D7A1199FAE1200AF402E /* FXKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FXKeychain.m; path = Common/FXKeychain.m; sourceTree = "<group>"; };
+		6AD5D7A819A0ECFB00AF402E /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = Common/Reachability.h; sourceTree = "<group>"; };
+		6AD5D7A919A0ECFB00AF402E /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = Common/Reachability.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -305,6 +308,8 @@
 		6AD5D79F199FAE0100AF402E /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				6AD5D7A819A0ECFB00AF402E /* Reachability.h */,
+				6AD5D7A919A0ECFB00AF402E /* Reachability.m */,
 				6AD5D7A0199FAE1200AF402E /* FXKeychain.h */,
 				6AD5D7A1199FAE1200AF402E /* FXKeychain.m */,
 			);
@@ -453,6 +458,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AD5D7AA19A0ECFB00AF402E /* Reachability.m in Sources */,
 				6AD5D6C61998D7DC00AF402E /* AKMailDetailViewController.m in Sources */,
 				6AD5D6F21998F89600AF402E /* AKModel.m in Sources */,
 				6AD5D79B199E70E000AF402E /* AKMailMessage.m in Sources */,
@@ -551,7 +557,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -584,7 +590,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
