@@ -23,14 +23,7 @@ extern NSString * const FetchFullMessageKey;
 @property (weak, nonatomic) IBOutlet UITextField *hostnameTextField;
 @property (weak, nonatomic) IBOutlet UISwitch *fetchFullMessageSwitch;
 
-
-@property (nonatomic, weak) id<AKSettingsViewControllerDelegate> delegate;
 - (IBAction)done:(id)sender;
 - (IBAction)clearCacheAction:(id)sender;
 
-
-@end
-
-@protocol SettingsViewControllerDelegate <NSObject>
-- (void)settingsViewControllerFinished:(AKSettingsViewController *)viewController;
 @end

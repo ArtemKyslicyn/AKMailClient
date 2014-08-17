@@ -106,7 +106,6 @@
     NSLog(@"finish");
 }
 
-
 -(void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     NSLog(@"Error for WEBVIEW: %@", [error description]);
 }

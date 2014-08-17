@@ -40,33 +40,29 @@
     if (coordinator != nil) {
         _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         [_managedObjectContext setPersistentStoreCoordinator:coordinator];
-       		//step 1
-       // [context setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];				//step 2
-        //[_managedObjectContext setMergePolicy:NSMergeObjectByPropertyStoreTrumpMergePolicy];
-        //[_managedObjectContext observeContext:self.privatManagedObjectContext];						//step 3
     }
     return _managedObjectContext;
 }
 
 
-- (NSManagedObjectContext *)privatManagedObjectContext
-{
-    if (_managedObjectContext != nil) {
-        return _managedObjectContext;
+- (NSManagedObjectContext *)privatManagedObjectContext{
+    
+    if (_privatManagedObjectContext != nil) {
+        return _privatManagedObjectContext;
     }
     
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
     if (coordinator != nil) {
-        _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-        [_managedObjectContext setPersistentStoreCoordinator:coordinator];
-        [_managedObjectContext setParentContext:_managedObjectContext];
+        _privatManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+       // [_privatManagedObjectContext setPersistentStoreCoordinator:coordinator];
+        [_privatManagedObjectContext setParentContext:self.managedObjectContext];
     }
-    return _managedObjectContext;
+    return _privatManagedObjectContext;
 }
 // Returns the managed object model for the application.
 // If the model doesn't already exist, it is created from the application's model.
-- (NSManagedObjectModel *)managedObjectModel
-{
+- (NSManagedObjectModel *)managedObjectModel{
+    
     if (_managedObjectModel != nil) {
         return _managedObjectModel;
     }
@@ -77,8 +73,8 @@
 
 // Returns the persistent store coordinator for the application.
 // If the coordinator doesn't already exist, it is created and the application's store added to it.
-- (NSPersistentStoreCoordinator *)persistentStoreCoordinator
-{
+- (NSPersistentStoreCoordinator *)persistentStoreCoordinator{
+  
     if (_persistentStoreCoordinator != nil) {
         return _persistentStoreCoordinator;
     }
@@ -97,32 +93,28 @@
     return _persistentStoreCoordinator;
 }
 
-- (void)saveContext
-{
+- (void)saveContext{
    
-    NSManagedObjectContext *managedObjectContext = self.privatManagedObjectContext;
+    NSManagedObjectContext *privateManagedObjectContext = self.privatManagedObjectContext;
     
-  
-    
-    if (managedObjectContext != nil) {
-       
+    if (privateManagedObjectContext != nil) {
         
-        [managedObjectContext performBlock:^{
+        [privateManagedObjectContext performBlock:^{
             //make changes
              NSError *error = nil;
-            if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
+            if ([privateManagedObjectContext hasChanges] && ![privateManagedObjectContext save:&error]) {
 
                 NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-                abort();
             }
         }];
     }
+    
      NSError *error = nil;
     [self.managedObjectContext save:&error];
-    }
 
-- (NSFetchedResultsController *)fetchedResultsController
-{
+}
+
+- (NSFetchedResultsController *)fetchedResultsController{
     if (_fetchedResultsController != nil) {
         return _fetchedResultsController;
     }
@@ -150,7 +142,6 @@
 	NSError *error = nil;
 	if (![self.fetchedResultsController performFetch:&error]) {
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-	    abort();
 	}
     
     return _fetchedResultsController;
@@ -160,15 +151,13 @@
 #pragma mark - Application's Documents directory
 
 // Returns the URL to the application's Documents directory.
-- (NSURL *)applicationDocumentsDirectory
-{
+- (NSURL *)applicationDocumentsDirectory{
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
 #pragma mark - Common operations
 
-- (void)removeAllEntityName:(NSString *)entityName withPredicate:(NSPredicate *)predicate
-{
+- (void)removeAllEntityName:(NSString *)entityName withPredicate:(NSPredicate *)predicate{
     
     [self.privatManagedObjectContext performBlock:^{
         NSFetchRequest *allEntieties = [[NSFetchRequest alloc] init];
@@ -192,13 +181,8 @@
         
         [self.privatManagedObjectContext save:&error];
         
-//        dispatch_sync(dispatch_get_main_queue(), ^{
-//            NSLog(@"Done write test: Saving parent");
-//            [self.managedObjectContext save:nil];
-//            
-//        });
     }];
-	//[self saveContext];
+    
 }
 
 
@@ -288,29 +272,34 @@
 }
 
 -(void)saveNewMailArrayToDB:(NSArray*)msgArray{
-    [self.privatManagedObjectContext performBlock:^{
-        for (int i = 0; i< [msgArray count]; i++) {
+    // add
+
+        [self.privatManagedObjectContext performBlock:^{
             
-            @autoreleasepool {
-                MCOIMAPMessage *msg = [msgArray objectAtIndex:i];
+            for (int i = 0; i< [msgArray count]; i++) {
                 
-                NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
-                AKMailMessage *mailMessage = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:self.privatManagedObjectContext];
+                @autoreleasepool {
+                    MCOIMAPMessage *msg = [msgArray objectAtIndex:i];
+                    
+                    NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
+                    AKMailMessage *mailMessage = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:self.privatManagedObjectContext];
+                    
+                    mailMessage.from = msg.header.sender.displayName;
+                    mailMessage.subject = msg.header.subject;
+                    mailMessage.uid =  [NSNumber numberWithUnsignedInt: [msg uid]];
+                    mailMessage.recivedData = msg.header.receivedDate;
+                    NSLog(@"description %@",msg.header.description);
+                }
                 
-                mailMessage.from = msg.header.sender.displayName;
-                mailMessage.subject = msg.header.subject;
-                mailMessage.uid =  [NSNumber numberWithUnsignedInt: [msg uid]];
-                mailMessage.recivedData = msg.header.receivedDate;
-                NSLog(@"description %@",msg.header.description);
             }
             
-        }
-        //[self saveContext];
-        NSError * error = nil;
-        [self.privatManagedObjectContext save:&error];
-        
-
-    }];
+            [self.privatManagedObjectContext save:nil];
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                NSLog(@"Done write test: Saving parent");
+                [self.managedObjectContext save:nil];
+            });
+            
+        }];
     
 }
 
