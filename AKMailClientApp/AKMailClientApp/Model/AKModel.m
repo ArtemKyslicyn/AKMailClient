@@ -65,41 +65,46 @@ static id _sharedInstance;
     return nil;
 }
 
--(void)syncInboxComplete:(void(^)(BOOL isNewMailRcived))complete fail:(void(^)(NSError *fail))fail {
+-(void)syncInboxComplete:(void(^)(BOOL isNewMailRecived))complete fail:(void(^)(NSError *fail))fail {
     
     int countOfMailInDB = [_dataSource countOfMailsInCoreData];
     if ([self loadSettings]) {
         //GET mail headers
         [_mailManager getIMAPMailHeadersWithCountForLoadedMail:countOfMailInDB
-                                                      complete:^( NSArray * fetchedMessages, MCOIndexSet * vanishedMessages, BOOL newMailRecived){
+        complete:^( NSArray * fetchedMessages, MCOIndexSet * vanishedMessages, BOOL newMailRecived){
                                                           
-                                                          if (newMailRecived) {
-                                                              [_dataSource  saveNewMailArrayToDB:fetchedMessages];
-                                                              if (_isFetchFullMessage) {
-                                                                  
-                                                                  [self getMailBodyForAllHeaderComplete:^{
-                                                                      complete(YES);
-                                                                  } fail:^(NSError *fail) {
-                                                                      complete(YES);
-                                                                  }];
-                                                                  
-                                                              }else{
-                                                                  complete(YES);
-                                                              }
-                                                              
-                                                          }else{
-                                                              complete(NO);
-                                                          }
+                if (newMailRecived) {
+                    [_dataSource  saveNewMailArrayToDB:fetchedMessages];
+                            complete(YES);
+                                                            
+                        }else{
+                            complete(NO);
+                        }
                                                           
-                                                      }
-                                                          fail:^(NSError* error){
-                                                              fail(error);
-                                                          }];
+                   }
+                 fail:^(NSError* error){
+                       fail(error);
+                 }];
     }else{
         fail(nil);
     }
     
     
+}
+
+-(void)loadBodyForMailsComplete:(void(^)())complete fail:(void(^)(NSError *fail))fail {
+    if (_isFetchFullMessage) {
+        
+        [self getMailBodyForAllHeaderComplete:^{
+            complete();
+        } fail:^(NSError *error) {
+            fail(error);
+        }];
+        
+        
+    }else{
+        complete();
+    }
 }
 
 -(void)getMailBodyForAllHeaderComplete:(void(^)())complete fail:(void(^)(NSError *fail))fail{

@@ -26,6 +26,8 @@ extern NSString * const FetchFullMessageKey;
 
 @property (nonatomic, weak) id<AKSettingsViewControllerDelegate> delegate;
 - (IBAction)done:(id)sender;
+- (IBAction)clearCacheAction:(id)sender;
+
 
 @end
 

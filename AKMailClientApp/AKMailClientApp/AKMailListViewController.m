@@ -199,7 +199,10 @@
 - (void)configureCell:(AKMailCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     AKMailMessage *object = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    cell.dataLabel.text = [object.recivedData description];
+    NSString *dateString = [NSDateFormatter localizedStringFromDate:object.recivedData
+                                                          dateStyle:NSDateFormatterShortStyle
+                                                          timeStyle:NSDateFormatterFullStyle];
+    cell.dataLabel.text = dateString;
     cell.subjectLabel.text = object.subject;
     cell.fromLabel.text = object.from;
 }
@@ -218,6 +221,22 @@
       
     } fail:^(NSError *fail) {
          [self.refreshControl endRefreshing];
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error",@"") message:fail.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
+    }];
+    
+}
+
+-(void)loadBodyOperation{
+    
+    [[AKModel sharedManager] loadBodyForMailsComplete:^() {
+  
+        [self.tableView reloadData];
+        
+        
+    } fail:^(NSError *fail) {
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error",@"") message:fail.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
     }];
     
 }
@@ -233,5 +252,6 @@
 
 -(void)refresh:(id)sender{
     [self syncMailOperation];
+    [self loadBodyOperation];
 }
 @end

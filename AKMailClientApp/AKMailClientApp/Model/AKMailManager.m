@@ -48,24 +48,16 @@ static  NSString * const kMailCountKey = @"kMailCountKey";
 
 -(void)getIMAPMailHeadersWithCountForLoadedMail:(int)сountCoreDataMail complete:(void (^)( NSArray * fetchedMessages, MCOIndexSet * vanishedMessages, BOOL newMailRecived))completionBlock fail:(void (^)(NSError* error))failBlock{
     
-    NSInteger previosMailCount = [[NSUserDefaults standardUserDefaults] integerForKey:kMailCountKey];
+ 
     MCOIMAPFolderInfoOperation *inboxFolderInfo = [self.imapSession folderInfoOperation:self.folder];
-   // MCOIMAPFolderStatusOperation  *folderStatus = [self.imapSession folderStatusOperation:self.folder];
-//    
-//    [folderStatus start:^(NSError *error, MCOIMAPFolderStatus *status){
-//        
-//        int totalNewMessages = status.recentCount;
-//        
-//        NSLog(@"Sync recentCount: %d",totalNewMessages);
-//    }];
+
 
     [inboxFolderInfo start:^(NSError *error, MCOIMAPFolderInfo *info)
      {
          if(!error){
          self.totalNumberOfInboxMessages = [info messageCount];
          
-         [[NSUserDefaults standardUserDefaults] setInteger:self.totalNumberOfInboxMessages forKey:kMailCountKey];
-             MCORange range;
+          MCORange range;
           NSInteger countOfNewMessages =  self.totalNumberOfInboxMessages - сountCoreDataMail;
           
          
