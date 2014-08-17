@@ -82,7 +82,7 @@
    
     NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
     
-    [self.persistentStoreCoordinator lock];
+  
     
     if (managedObjectContext != nil) {
        
@@ -97,8 +97,7 @@
             }
         }];
     }
-      [self.persistentStoreCoordinator unlock];
-}
+    }
 
 - (NSFetchedResultsController *)fetchedResultsController
 {
