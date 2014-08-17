@@ -24,8 +24,6 @@ static  NSString * const kMailCountKey = @"kMailCountKey";
     if(self){
         self.imapSession = [[MCOIMAPSession alloc] init];
       
-        
-        
         self.requestKind = (MCOIMAPMessagesRequestKindHeaders | MCOIMAPMessagesRequestKindStructure |
                             MCOIMAPMessagesRequestKindInternalDate | MCOIMAPMessagesRequestKindHeaderSubject |
                             MCOIMAPMessagesRequestKindFlags);
@@ -104,18 +102,12 @@ static  NSString * const kMailCountKey = @"kMailCountKey";
 
 }
 
-
-
-
-
-
 -(void)getMailHTMLBodyForMessageUID:(int)uid complete:(void (^)(NSString* msgHTMLBody))completionBlock fail:(void (^)(NSError* error))failBlock{
     
     MCOIMAPFetchContentOperation *operation = [self.imapSession fetchMessageByUIDOperationWithFolder:self.folder uid:uid];
     
     [operation start:^(NSError *error, NSData *data) {
         
-
         if (error||!data) {
             failBlock(error);
         }else{
