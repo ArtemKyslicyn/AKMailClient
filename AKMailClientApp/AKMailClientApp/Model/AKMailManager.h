@@ -10,7 +10,7 @@
 
 @interface AKMailManager : NSObject
 
-@property(nonatomic,retain) NSString * folder;
+@property(nonatomic,copy) NSString * folder;
 @property(nonatomic,assign) MCOIMAPMessagesRequestKind requestKind;
 @property (nonatomic,assign) NSInteger totalNumberOfInboxMessages;
 

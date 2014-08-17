@@ -89,7 +89,6 @@ static  NSString * const kMailCountKey = @"kMailCountKey";
                      NSLog(@"The post man delivereth:%@", fetchedMessages);
                  }
                  
-                 
              }];
          }else{
              //if we haven't new mail we send nil 
