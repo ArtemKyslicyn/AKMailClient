@@ -24,7 +24,7 @@ NSString * const FetchFullMessageKey = @"FetchFullMessageEnabled";
     [[NSUserDefaults standardUserDefaults] setObject:self.hostnameTextField.text ?: @"" forKey:HostnameKey];
     [[NSUserDefaults standardUserDefaults] setBool:[self.fetchFullMessageSwitch isOn] forKey:FetchFullMessageKey];
 
-    if ([_email isEqualToString: self.emailTextField.text]) {
+    if (![_email isEqualToString: self.emailTextField.text]) {
         [[AKModel sharedManager].dataSource removeAllMailInDB];
     }
     

@@ -16,6 +16,7 @@
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
+@synthesize privatManagedObjectContext = _privatManagedObjectContext;
 
 -(id)init{
     self = [super init];
@@ -39,10 +40,29 @@
     if (coordinator != nil) {
         _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+       		//step 1
+       // [context setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];				//step 2
+        //[_managedObjectContext setMergePolicy:NSMergeObjectByPropertyStoreTrumpMergePolicy];
+        //[_managedObjectContext observeContext:self.privatManagedObjectContext];						//step 3
     }
     return _managedObjectContext;
 }
 
+
+- (NSManagedObjectContext *)privatManagedObjectContext
+{
+    if (_managedObjectContext != nil) {
+        return _managedObjectContext;
+    }
+    
+    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+    if (coordinator != nil) {
+        _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+        [_managedObjectContext setParentContext:_managedObjectContext];
+    }
+    return _managedObjectContext;
+}
 // Returns the managed object model for the application.
 // If the model doesn't already exist, it is created from the application's model.
 - (NSManagedObjectModel *)managedObjectModel
@@ -80,7 +100,7 @@
 - (void)saveContext
 {
    
-    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
+    NSManagedObjectContext *managedObjectContext = self.privatManagedObjectContext;
     
   
     
@@ -97,6 +117,8 @@
             }
         }];
     }
+     NSError *error = nil;
+    [self.managedObjectContext save:&error];
     }
 
 - (NSFetchedResultsController *)fetchedResultsController
@@ -147,26 +169,36 @@
 
 - (void)removeAllEntityName:(NSString *)entityName withPredicate:(NSPredicate *)predicate
 {
-	NSFetchRequest *allEntieties = [[NSFetchRequest alloc] init];
-	[allEntieties setEntity:[NSEntityDescription entityForName:entityName inManagedObjectContext:self.managedObjectContext]];
-	[allEntieties setIncludesPropertyValues:YES];
     
-    //only fetch the managedObjectID
-	NSError *error = nil;
-	NSArray *entities = [self.managedObjectContext executeFetchRequest:allEntieties error:&error];
-    
-	NSLog(@"%d", entities.count);
-    
-	if (predicate) {
-		NSArray *arr = [entities filteredArrayUsingPredicate:predicate];
-		entities = arr;
-	}
-    //error handling goes here
-	for (NSManagedObject *entity in entities) {
-		[self.managedObjectContext deleteObject:entity];
-	}
-    
-	[self saveContext];
+    [self.privatManagedObjectContext performBlock:^{
+        NSFetchRequest *allEntieties = [[NSFetchRequest alloc] init];
+        [allEntieties setEntity:[NSEntityDescription entityForName:entityName inManagedObjectContext:self.managedObjectContext]];
+        [allEntieties setIncludesPropertyValues:YES];
+        
+        //only fetch the managedObjectID
+        NSError *error = nil;
+        NSArray *entities = [self.privatManagedObjectContext executeFetchRequest:allEntieties error:&error];
+        
+        NSLog(@"%d", entities.count);
+        
+        if (predicate) {
+            NSArray *arr = [entities filteredArrayUsingPredicate:predicate];
+            entities = arr;
+        }
+        //error handling goes here
+        for (NSManagedObject *entity in entities) {
+            [self.privatManagedObjectContext deleteObject:entity];
+        }
+        
+        [self.privatManagedObjectContext save:&error];
+        
+//        dispatch_sync(dispatch_get_main_queue(), ^{
+//            NSLog(@"Done write test: Saving parent");
+//            [self.managedObjectContext save:nil];
+//            
+//        });
+    }];
+	//[self saveContext];
 }
 
 
@@ -239,7 +271,7 @@
 -(void)removeAllMailInDB{
     
     [self removeAllEntityName:@"AKMailMessage" withPredicate:nil];
-    [self saveContext];
+    //[self saveContext];
 }
 
 -(AKMailMessage*)getMessageForManagedID:(NSManagedObjectID*)uid{
@@ -256,24 +288,30 @@
 }
 
 -(void)saveNewMailArrayToDB:(NSArray*)msgArray{
-    
-    for (int i = 0; i< [msgArray count]; i++) {
-       
-        @autoreleasepool {
-            MCOIMAPMessage *msg = [msgArray objectAtIndex:i];
+    [self.privatManagedObjectContext performBlock:^{
+        for (int i = 0; i< [msgArray count]; i++) {
             
-            NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
-            AKMailMessage *mailMessage = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:self.managedObjectContext];
+            @autoreleasepool {
+                MCOIMAPMessage *msg = [msgArray objectAtIndex:i];
+                
+                NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
+                AKMailMessage *mailMessage = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:self.privatManagedObjectContext];
+                
+                mailMessage.from = msg.header.sender.displayName;
+                mailMessage.subject = msg.header.subject;
+                mailMessage.uid =  [NSNumber numberWithUnsignedInt: [msg uid]];
+                mailMessage.recivedData = msg.header.receivedDate;
+                NSLog(@"description %@",msg.header.description);
+            }
             
-            mailMessage.from = msg.header.sender.displayName;
-            mailMessage.subject = msg.header.subject;
-            mailMessage.uid =  [NSNumber numberWithUnsignedInt: [msg uid]];
-            mailMessage.recivedData = msg.header.receivedDate;
-            NSLog(@"description %@",msg.header.description);
         }
+        //[self saveContext];
+        NSError * error = nil;
+        [self.privatManagedObjectContext save:&error];
         
-    }
-    [self saveContext];
+
+    }];
+    
 }
 
 @end

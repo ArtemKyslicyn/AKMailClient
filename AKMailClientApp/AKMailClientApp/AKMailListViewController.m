@@ -81,6 +81,17 @@
                                                object:self.managedObjectContext];
 }
 
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    
+    
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:NSManagedObjectContextWillSaveNotification];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:NSManagedObjectContextDidSaveNotification];
+    
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
