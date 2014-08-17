@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Arcilite. All rights reserved.
 //
 
-#import  <Foundation/Foundation.h>
+
 #import  "AKCoreDataProvider.h"
 #import  "AKMailManager.h"
 @interface AKModel : NSObject

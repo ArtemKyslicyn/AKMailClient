@@ -6,14 +6,13 @@
 //  Copyright (c) 2014 Arcilite. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import  "MailCore/MailCore.h"
 
 @interface AKMailManager : NSObject
 
 @property(nonatomic,retain) NSString * folder;
 @property(nonatomic,assign) MCOIMAPMessagesRequestKind requestKind;
-@property (nonatomic,assign) int totalNumberOfInboxMessages;
+@property (nonatomic,assign) NSInteger totalNumberOfInboxMessages;
 
 -(void)getMailHTMLBodyForMessageUID:(int)uid complete:(void (^)(NSString* msgHTMLBody))completionBlock fail:(void (^)(NSError* error))failBlock;
 

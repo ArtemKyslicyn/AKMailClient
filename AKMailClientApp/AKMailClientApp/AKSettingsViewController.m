@@ -39,6 +39,7 @@ NSString * const FetchFullMessageKey = @"FetchFullMessageEnabled";
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
+    
     _email = [[NSUserDefaults standardUserDefaults] stringForKey:UsernameKey];
     self.emailTextField.text = _email;
     self.passwordTextField.text = [[FXKeychain defaultKeychain] objectForKey:PasswordKey];

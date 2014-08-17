@@ -8,7 +8,9 @@
 
 #import "AKMailManager.h"
 #import "AKModel.h"
-static NSString * kDefaultMailBoxFolder = @"INBOX";
+static  NSString * const kDefaultMailBoxFolder = @"INBOX";
+static  NSString * const kMailCountKey = @"kMailCountKey";
+
 @interface AKMailManager ()
 
 @property (nonatomic,retain) MCOIMAPSession * imapSession;
@@ -46,17 +48,38 @@ static NSString * kDefaultMailBoxFolder = @"INBOX";
 
 -(void)getIMAPMailHeadersWithCountForLoadedMail:(int)сountCoreDataMail complete:(void (^)( NSArray * fetchedMessages, MCOIndexSet * vanishedMessages, BOOL newMailRecived))completionBlock fail:(void (^)(NSError* error))failBlock{
     
-    
+    NSInteger previosMailCount = [[NSUserDefaults standardUserDefaults] integerForKey:kMailCountKey];
     MCOIMAPFolderInfoOperation *inboxFolderInfo = [self.imapSession folderInfoOperation:self.folder];
+   // MCOIMAPFolderStatusOperation  *folderStatus = [self.imapSession folderStatusOperation:self.folder];
+//    
+//    [folderStatus start:^(NSError *error, MCOIMAPFolderStatus *status){
+//        
+//        int totalNewMessages = status.recentCount;
+//        
+//        NSLog(@"Sync recentCount: %d",totalNewMessages);
+//    }];
+
     [inboxFolderInfo start:^(NSError *error, MCOIMAPFolderInfo *info)
      {
+         if(!error){
          self.totalNumberOfInboxMessages = [info messageCount];
          
-         int countOfNewMessages =  self.totalNumberOfInboxMessages - сountCoreDataMail;
-         MCORange range = MCORangeMake(countOfNewMessages,  self.totalNumberOfInboxMessages);
-         MCOIndexSet *uids = [MCOIndexSet indexSetWithRange:range];
+         [[NSUserDefaults standardUserDefaults] setInteger:self.totalNumberOfInboxMessages forKey:kMailCountKey];
+             MCORange range;
+          NSInteger countOfNewMessages =  self.totalNumberOfInboxMessages - сountCoreDataMail;
+          
+         
          
          if(countOfNewMessages > 0){
+             if(сountCoreDataMail == 0){
+                 range =MCORangeMake(0, 1);
+             }else{
+                 
+                 range = MCORangeMake(0, UINT64_MAX - countOfNewMessages);
+             }
+             
+             
+             MCOIndexSet *uids = [MCOIndexSet indexSetWithRange:range];
              
              MCOIMAPFetchMessagesOperation *fetchOperation = [self.imapSession fetchMessagesByUIDOperationWithFolder:self.folder requestKind:self.requestKind uids:uids];
              
@@ -81,6 +104,9 @@ static NSString * kDefaultMailBoxFolder = @"INBOX";
          }else{
              //if we haven't new mail we send nil 
              completionBlock(nil,nil,NO);
+         }
+         }else{
+             failBlock(error);
          }
      }];
 
