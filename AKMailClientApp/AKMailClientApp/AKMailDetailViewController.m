@@ -20,27 +20,25 @@
 
 - (void)setMessageItem:(AKMailMessage *)messageItem
 {
-
-        _messageItem = messageItem;
-    
-        [self configureView];
+    _messageItem = messageItem;
+    [self configureView];
   
-
     if (self.masterPopoverController != nil) {
         [self.masterPopoverController dismissPopoverAnimated:YES];
     }        
 }
 
-- (void)configureView
-{
+- (void)configureView{
+    
     // Update the user interface for the detail item.
     if (self.messageItem) {
+
         if (self.messageItem.htmlBody.length>0) {
+        
             [self.webView loadHTMLString:self.messageItem.htmlBody baseURL:nil];
             NSLog(@"HTML %@",self.messageItem.htmlBody);
             NSLog(@"Cached");
 
-            
         }else{
             
             if ([AKModel sharedManager].recahbility.isReachable) {

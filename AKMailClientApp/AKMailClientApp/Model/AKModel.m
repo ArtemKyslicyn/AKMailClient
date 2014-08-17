@@ -13,9 +13,10 @@
 #import "AKSettingsViewController.h"
 #import  "AKMailMessage.h"
 #import "FXKeychain.h"
+
 static NSString* const kAKException = @"You Can't create instance for singleton";
 static NSString* const kAKExceptionReason = @"You Trying to call new for singleton";
-
+static NSString* const KRachebilityTestResource = @"www.google.com";
 @implementation AKModel{
     BOOL _isFetchFullMessage;
 }
@@ -35,7 +36,7 @@ static id _sharedInstance;
     if (self = [super init]) {
         _dataSource  = [AKCoreDataProvider new];
         _mailManager = [AKMailManager new];
-        _recahbility = [Reachability reachabilityWithHostname:@"www.google.com"];
+        _recahbility = [Reachability reachabilityWithHostname:KRachebilityTestResource];
         
     }
     return self;
@@ -102,7 +103,6 @@ static id _sharedInstance;
             fail(error);
         }];
         
-        
     }else{
         complete();
     }
@@ -139,7 +139,6 @@ static id _sharedInstance;
         }
        
     });
-  
     
 }
 
@@ -149,6 +148,7 @@ static id _sharedInstance;
 	NSString *password = [[FXKeychain defaultKeychain] objectForKey:PasswordKey];
 	NSString *hostname = [[NSUserDefaults standardUserDefaults] objectForKey:HostnameKey];
     _isFetchFullMessage =[[NSUserDefaults standardUserDefaults] boolForKey:FetchFullMessageKey];
+   
     if (username.length>0 && password.length>0) {
     
         [_mailManager setIMAPUserAccountSettingsHostName:hostname port:993 username:username password:password];
@@ -160,11 +160,7 @@ static id _sharedInstance;
         return NO;
     }
     
-    
-    
 }
-
-
 
 - (void)dealloc {
     // Should never be called, but just here for clarity really.

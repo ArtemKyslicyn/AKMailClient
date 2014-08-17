@@ -22,7 +22,7 @@
     self = [super init];
     
     if(self){
-        [self managedObjectContext];
+       
     }
        return self;
 }
@@ -54,7 +54,6 @@
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
     if (coordinator != nil) {
         _privatManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-       // [_privatManagedObjectContext setPersistentStoreCoordinator:coordinator];
         [_privatManagedObjectContext setParentContext:self.managedObjectContext];
     }
     return _privatManagedObjectContext;
@@ -115,6 +114,7 @@
 }
 
 - (NSFetchedResultsController *)fetchedResultsController{
+    
     if (_fetchedResultsController != nil) {
         return _fetchedResultsController;
     }
@@ -186,8 +186,7 @@
 }
 
 
-- (NSArray *)getAllByName:(NSString *)objectName predicate:(NSPredicate *)predicate
-{
+- (NSArray *)getAllByName:(NSString *)objectName predicate:(NSPredicate *)predicate{
 	NSFetchRequest *request = [[NSFetchRequest alloc] init];
 	NSEntityDescription *entity = [NSEntityDescription entityForName:objectName inManagedObjectContext:self.managedObjectContext];
     
@@ -223,8 +222,6 @@
     return results;
 }
 
-
-
 - (BOOL)coreDataHasEntriesForEntityName:(NSString *)entityName {
     
   
@@ -253,9 +250,7 @@
 }
 
 -(void)removeAllMailInDB{
-    
     [self removeAllEntityName:@"AKMailMessage" withPredicate:nil];
-    //[self saveContext];
 }
 
 -(AKMailMessage*)getMessageForManagedID:(NSManagedObjectID*)uid{

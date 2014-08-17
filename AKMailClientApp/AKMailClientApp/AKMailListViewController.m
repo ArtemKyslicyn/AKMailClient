@@ -31,8 +31,6 @@
     return aFetchedResultsController;
 }
 
-
-
 -(NSManagedObjectContext*)managedObjectContext{
     return [[[AKModel sharedManager] dataSource] managedObjectContext];
 }
@@ -84,50 +82,35 @@
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     
-    
-    
     [[NSNotificationCenter defaultCenter] removeObserver:NSManagedObjectContextWillSaveNotification];
-    
     [[NSNotificationCenter defaultCenter] removeObserver:NSManagedObjectContextDidSaveNotification];
     
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-
 
 #pragma mark - Table View
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return [[self.fetchedResultsController sections] count];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     id <NSFetchedResultsSectionInfo> sectionInfo = [self.fetchedResultsController sections][section];
     return [sectionInfo numberOfObjects];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
     [self configureCell:cell atIndexPath:indexPath];
     return cell;
 }
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath{
     // Return NO if you do not want the specified item to be editable.
     return YES;
 }
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
         [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
@@ -135,34 +118,34 @@
         NSError *error = nil;
         if (![context save:&error]) {
             NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
         }
     }   
 }
 
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath{
     // The table view should not be re-orderable.
     return NO;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
     AKMailMessage *object = [[self fetchedResultsController] objectAtIndexPath:indexPath];
     self.detailViewController.messageItem = object;
+    
 }
 
 
 #pragma mark - Fetched results controller
 
-- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller
-{
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller{
+    
     [self.tableView beginUpdates];
+
 }
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeSection:(id <NSFetchedResultsSectionInfo>)sectionInfo
-           atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type
-{
+           atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type{
+  
     switch(type) {
         case NSFetchedResultsChangeInsert:
             [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
@@ -172,12 +155,12 @@
             [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
             break;
     }
+    
 }
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject
        atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type
-      newIndexPath:(NSIndexPath *)newIndexPath
-{
+      newIndexPath:(NSIndexPath *)newIndexPath{
     UITableView *tableView = self.tableView;
     
     switch(type) {
@@ -200,15 +183,16 @@
     }
 }
 
-- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller
-{
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller{
+    
     [self.tableView endUpdates];
+
 }
 
 
 
-- (void)configureCell:(AKMailCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
+- (void)configureCell:(AKMailCell *)cell atIndexPath:(NSIndexPath *)indexPath{
+    
     AKMailMessage *object = [self.fetchedResultsController objectAtIndexPath:indexPath];
     NSString *dateString = [NSDateFormatter localizedStringFromDate:object.recivedData
                                                           dateStyle:NSDateFormatterShortStyle
@@ -216,6 +200,7 @@
     cell.dataLabel.text = dateString;
     cell.subjectLabel.text = object.subject;
     cell.fromLabel.text = object.from;
+    
 }
 
 
@@ -224,8 +209,8 @@
 
 -(void)syncMailOperation{
     
-    [[AKModel sharedManager] syncInboxComplete:^(BOOL isNewMailRcived) {
-        if (!isNewMailRcived) {
+    [[AKModel sharedManager] syncInboxComplete:^(BOOL isNewMailRecived) {
+        if (!isNewMailRecived) {
             [self.refreshControl endRefreshing];
             [self.tableView reloadData];
         }
@@ -243,7 +228,6 @@
     [[AKModel sharedManager] loadBodyForMailsComplete:^() {
   
         [self.tableView reloadData];
-        
         
     } fail:^(NSError *fail) {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error",@"") message:fail.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
@@ -265,4 +249,5 @@
     [self syncMailOperation];
     [self loadBodyOperation];
 }
+
 @end
