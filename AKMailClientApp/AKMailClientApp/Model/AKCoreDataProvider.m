@@ -208,11 +208,11 @@
 
 -(NSArray*)coreDataEntriesForEntityName:(NSString*)entityName{
     NSFetchRequest *request = [[NSFetchRequest alloc] init] ;
-    NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:self.managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:self.privatManagedObjectContext];
     [request setEntity:entity];
     
     NSError *error = nil;
-    NSArray *results = [self.managedObjectContext executeFetchRequest:request error:&error];
+    NSArray *results = [self.privatManagedObjectContext executeFetchRequest:request error:&error];
     
     if (!results) {
         NSLog(@"Fetch error: %@", error);

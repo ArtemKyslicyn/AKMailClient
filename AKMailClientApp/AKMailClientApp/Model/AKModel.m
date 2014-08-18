@@ -76,14 +76,16 @@ static id _sharedInstance;
         complete:^( NSArray * fetchedMessages, MCOIndexSet * vanishedMessages, BOOL newMailRecived){
                                                           
                 if (newMailRecived) {
-                    [_dataSource  saveNewMailArrayToDB:fetchedMessages];
+                            [_dataSource  saveNewMailArrayToDB:fetchedMessages];
                             complete(YES);
                                                             
                         }else{
                             complete(NO);
                         }
+            
                                                           
-                   }
+                 }
+         
                  fail:^(NSError* error){
                        fail(error);
                  }];
@@ -112,10 +114,12 @@ static id _sharedInstance;
     
     NSArray * mailHeadersArray = [_dataSource arrayOfMailsInCoreData];
     __block int countHeaders = [mailHeadersArray count];
-    for (__block AKMailMessage* message in mailHeadersArray) {
-        [_mailManager getMailHTMLBodyForMessageUID:[message.uid unsignedIntValue] complete:^(NSString *msgHTMLBody) {
+    for (AKMailMessage* message in mailHeadersArray) {
+        NSUInteger  uid = [message.uid unsignedIntegerValue];
+       __block NSManagedObjectID * objectId = message.objectID;
+        [_mailManager getMailHTMLBodyForMessageUID:uid complete:^(NSString *msgHTMLBody) {
             
-            AKMailMessage * mailMessage = [self.dataSource getMessageForManagedID:message.objectID]; //We get current context mananged object
+            AKMailMessage * mailMessage = [self.dataSource getMessageForManagedID:objectId]; //We get current context mananged object
             
             NSLog(@"HTML %@",msgHTMLBody);
             mailMessage.htmlBody = msgHTMLBody;
@@ -132,10 +136,10 @@ static id _sharedInstance;
         }];
     }
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 60 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         if (countHeaders>0) {
              NSLog(@"Time OUT ");
-            fail([NSError init]);
+            fail(nil);
         }
        
     });

@@ -14,7 +14,7 @@
 @property(nonatomic,assign) MCOIMAPMessagesRequestKind requestKind;
 @property (nonatomic,assign) NSInteger totalNumberOfInboxMessages;
 
--(void)getMailHTMLBodyForMessageUID:(int)uid complete:(void (^)(NSString* msgHTMLBody))completionBlock fail:(void (^)(NSError* error))failBlock;
+-(void)getMailHTMLBodyForMessageUID:(NSUInteger)uid complete:(void (^)(NSString* msgHTMLBody))completionBlock fail:(void (^)(NSError* error))failBlock;
 
 -(void)getIMAPMailHeadersWithCountForLoadedMail:(NSInteger)сountCoreDataMail complete:(void (^)( NSArray * fetchedMessages, MCOIndexSet * vanishedMessages,BOOL newMailRecived))completionBlock fail:(void (^)(NSError* error))failBlock;
 

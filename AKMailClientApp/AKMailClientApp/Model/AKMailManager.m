@@ -101,7 +101,7 @@ static  NSString * const kMailCountKey = @"kMailCountKey";
 
 }
 
--(void)getMailHTMLBodyForMessageUID:(int)uid complete:(void (^)(NSString* msgHTMLBody))completionBlock fail:(void (^)(NSError* error))failBlock{
+-(void)getMailHTMLBodyForMessageUID:(NSUInteger)uid complete:(void (^)(NSString* msgHTMLBody))completionBlock fail:(void (^)(NSError* error))failBlock{
     
     MCOIMAPFetchContentOperation *operation = [self.imapSession fetchMessageByUIDOperationWithFolder:self.folder uid:uid];
     

@@ -214,6 +214,7 @@
             [self.refreshControl endRefreshing];
             [self.tableView reloadData];
         }
+        [self loadBodyOperation];
       
     } fail:^(NSError *fail) {
          [self.refreshControl endRefreshing];
