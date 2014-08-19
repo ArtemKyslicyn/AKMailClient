@@ -17,6 +17,7 @@
 static NSString* const kAKException = @"You Can't create instance for singleton";
 static NSString* const kAKExceptionReason = @"You Trying to call new for singleton";
 static NSString* const KRachebilityTestResource = @"www.google.com";
+
 @implementation AKModel{
     BOOL _isFetchFullMessage;
 }

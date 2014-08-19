@@ -209,15 +209,17 @@
 
 -(void)syncMailOperation{
     
+    __weak AKMailListViewController  * wSelf = self;
+    
     [[AKModel sharedManager] syncInboxComplete:^(BOOL isNewMailRecived) {
         if (!isNewMailRecived) {
-            [self.refreshControl endRefreshing];
-            [self.tableView reloadData];
+            [wSelf.refreshControl endRefreshing];
+            [wSelf.tableView reloadData];
         }
         [self loadBodyOperation];
       
     } fail:^(NSError *fail) {
-         [self.refreshControl endRefreshing];
+         [wSelf.refreshControl endRefreshing];
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error",@"") message:fail.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
         [alert show];
     }];
@@ -225,10 +227,11 @@
 }
 
 -(void)loadBodyOperation{
+    __weak AKMailListViewController  * wSelf = self;
     
     [[AKModel sharedManager] loadBodyForMailsComplete:^() {
   
-        [self.tableView reloadData];
+        [wSelf.tableView reloadData];
         
     } fail:^(NSError *fail) {
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error",@"") message:fail.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];

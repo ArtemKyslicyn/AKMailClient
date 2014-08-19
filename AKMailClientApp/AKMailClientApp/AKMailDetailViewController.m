@@ -30,17 +30,18 @@
 
 - (void)configureView{
     
+    __weak AKMailDetailViewController *wSelf = self;
     // Update the user interface for the detail item.
     if (self.messageItem) {
 
         if (self.messageItem.htmlBody.length>0) {
         
-            [self.webView loadHTMLString:self.messageItem.htmlBody baseURL:nil];
+            [wSelf.webView loadHTMLString:self.messageItem.htmlBody baseURL:nil];
             NSLog(@"HTML %@",self.messageItem.htmlBody);
             NSLog(@"Cached");
 
         }else{
-            
+           [wSelf.webView loadHTMLString:nil baseURL:nil];
             if ([AKModel sharedManager].recahbility.isReachable) {
                AKMailMessage * mailMessage = [[AKModel sharedManager].dataSource getMessageForManagedID:self.messageItem.objectID];
                 [[AKModel sharedManager].mailManager getMailHTMLBodyForMessageUID:[mailMessage.uid unsignedIntValue] complete:^(NSString *msgHTMLBody) {
@@ -51,11 +52,12 @@
                     mailMessage.htmlBody = msgHTMLBody;
                     NSLog(@"HTML %@",self.messageItem.htmlBody);
                     
-                    [self.webView loadHTMLString: mailMessage.htmlBody baseURL:nil];
+                    [wSelf.webView loadHTMLString: mailMessage.htmlBody baseURL:nil];
                     
                 } fail:^(NSError *error) {
                     
-                    
+                    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error",@"") message:error.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                    [alert show];
                 }];
             }
             
