@@ -10,11 +10,15 @@
 #import "AKMailMessage.h"
 
 @interface AKMailDetailViewController ()
+
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
+
 - (void)configureView;
+
 @end
 
-@implementation AKMailDetailViewController
+
+@implementation AKMailDetailViewController;
 
 #pragma mark - Managing the detail item
 
@@ -28,43 +32,35 @@
     }        
 }
 
-- (void)configureView{
-    
+- (void)configureView
+{
     __weak AKMailDetailViewController *wSelf = self;
-    // Update the user interface for the detail item.
+        // Update the user interface for the detail item.
     if (self.messageItem) {
-
-        if (self.messageItem.htmlBody.length>0) {
-        
+        if (self.messageItem.htmlBody.length > 0) {
             [wSelf.webView loadHTMLString:self.messageItem.htmlBody baseURL:nil];
-            NSLog(@"HTML %@",self.messageItem.htmlBody);
+            NSLog(@"HTML %@", self.messageItem.htmlBody);
             NSLog(@"Cached");
-
-        }else{
-           [wSelf.webView loadHTMLString:nil baseURL:nil];
+        }
+        else {
+            [wSelf.webView loadHTMLString:nil baseURL:nil];
             if ([AKModel sharedManager].recahbility.isReachable) {
-               AKMailMessage * mailMessage = [[AKModel sharedManager].dataSource getMessageForManagedID:self.messageItem.objectID];
-                [[AKModel sharedManager].mailManager getMailHTMLBodyForMessageUID:[mailMessage.uid unsignedIntValue] complete:^(NSString *msgHTMLBody) {
+                AKMailMessage *mailMessage = [[AKModel sharedManager].dataSource getMessageForManagedID:self.messageItem.objectID];
+                [[AKModel sharedManager].mailManager getMailHTMLBodyForMessageUID:[mailMessage.uid unsignedIntValue] complete: ^(NSString *msgHTMLBody) {
+                        //We get current context mananged object
                     
-                     //We get current context mananged object
-                    
-                    NSLog(@"HTML %@",msgHTMLBody);
+                    NSLog(@"HTML %@", msgHTMLBody);
                     mailMessage.htmlBody = msgHTMLBody;
-                    NSLog(@"HTML %@",self.messageItem.htmlBody);
+                    NSLog(@"HTML %@", self.messageItem.htmlBody);
                     
-                    [wSelf.webView loadHTMLString: mailMessage.htmlBody baseURL:nil];
-                    
-                } fail:^(NSError *error) {
-                    
-                    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error",@"") message:error.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                    [wSelf.webView loadHTMLString:mailMessage.htmlBody baseURL:nil];
+                } fail: ^(NSError *error) {
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"") message:error.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                     [alert show];
                 }];
             }
-            
         }
     }
-    
-
 }
 
 - (void)viewDidLoad
@@ -77,7 +73,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - Split view
@@ -91,22 +86,25 @@
 
 - (void)splitViewController:(UISplitViewController *)splitController willShowViewController:(UIViewController *)viewController invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
 {
-    // Called when the view is shown again in the split view, invalidating the button and popover controller.
+        // Called when the view is shown again in the split view, invalidating the button and popover controller.
     [self.navigationItem setLeftBarButtonItem:nil animated:YES];
     self.masterPopoverController = nil;
 }
 
 #pragma mark - Web view
 
--(void)webViewDidStartLoad:(UIWebView *)webView {
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
     NSLog(@"start");
 }
 
--(void)webViewDidFinishLoad:(UIWebView *)webView {
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
     NSLog(@"finish");
 }
 
--(void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+{
     NSLog(@"Error for WEBVIEW: %@", [error description]);
 }
 

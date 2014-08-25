@@ -7,16 +7,15 @@
 //
 
 #import "AKModel.h"
-#import "MailCore/MailCore.h"
-#import "AKMailManager.h"
+#import "AKMailMessage.h"
 #import "AKCoreDataProvider.h"
+#import "AKMailManager.h"
 #import "AKSettingsViewController.h"
-#import  "AKMailMessage.h"
 #import "FXKeychain.h"
 
-static NSString* const kAKException = @"You Can't create instance for singleton";
-static NSString* const kAKExceptionReason = @"You Trying to call new for singleton";
-static NSString* const KRachebilityTestResource = @"www.google.com";
+static NSString * const kAKException             = @"You Can't create instance for singleton";
+static NSString * const kAKExceptionReason       = @"You Trying to call new for singleton";
+static NSString * const KRachebilityTestResource = @"www.google.com";
 
 @implementation AKModel{
     BOOL _isFetchFullMessage;

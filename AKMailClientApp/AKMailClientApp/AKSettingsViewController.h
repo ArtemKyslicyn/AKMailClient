@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 Arcilite. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 
 extern NSString * const UsernameKey;
 extern NSString * const PasswordKey;
@@ -15,6 +14,7 @@ extern NSString * const FetchFullMessageKey;
 
 
 @protocol AKSettingsViewControllerDelegate;
+
 
 @interface AKSettingsViewController : UIViewController
 

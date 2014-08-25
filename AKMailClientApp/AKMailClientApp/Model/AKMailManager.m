@@ -8,15 +8,19 @@
 
 #import "AKMailManager.h"
 #import "AKModel.h"
+
 static  NSString * const kDefaultMailBoxFolder = @"INBOX";
-static  NSString * const kMailCountKey = @"kMailCountKey";
+static  NSString * const kMailCountKey         = @"kMailCountKey";
+
 
 @interface AKMailManager ()
 
 @property (nonatomic,retain) MCOIMAPSession * imapSession;
 
 @end
-@implementation AKMailManager
+
+
+@implementation AKMailManager;
 
 -(id)init{
     self =[super init];

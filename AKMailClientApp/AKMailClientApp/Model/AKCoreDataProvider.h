@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Arcilite. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 
 @class AKMailMessage;
+
 @interface AKCoreDataProvider : NSObject 
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
