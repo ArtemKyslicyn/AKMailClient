@@ -16,7 +16,7 @@
 
 @interface AKMailListViewController ()
 
-@property (nonatomic, retain) NSFetchedResultsController *fetchedResultsController;
+@property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) NSManagedObjectContext     *managedObjectContext;
 @property (nonatomic, strong) UIRefreshControl           *refreshControl;
 
@@ -52,12 +52,9 @@
         // Do any additional setup after loading the view, typically from a nib.
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
     
-    
     self.detailViewController = (AKMailDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     
     self.refreshControl = [[UIRefreshControl alloc] init];
-    
-        // Configure Refresh Control
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
     
         // Configure View Controller
@@ -69,8 +66,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(mergeChanges:)
@@ -107,7 +102,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-    [self configureCell:cell atIndexPath:indexPath];
+    [self configureCell:(AKMailCell*)cell atIndexPath:indexPath];
     return cell;
 }
 
@@ -162,8 +157,9 @@
 }
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject
-       atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type
-      newIndexPath:(NSIndexPath *)newIndexPath
+                                                                atIndexPath:(NSIndexPath *)indexPath
+                                                              forChangeType:(NSFetchedResultsChangeType)type
+                                                               newIndexPath:(NSIndexPath *)newIndexPath
 {
     UITableView *tableView = self.tableView;
     
@@ -177,7 +173,7 @@
             break;
             
         case NSFetchedResultsChangeUpdate:
-            [self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
+            [self configureCell:(AKMailCell*)[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
             break;
             
         case NSFetchedResultsChangeMove:
@@ -198,9 +194,9 @@
     NSString *dateString = [NSDateFormatter localizedStringFromDate:object.recivedData
                                                           dateStyle:NSDateFormatterShortStyle
                                                           timeStyle:NSDateFormatterFullStyle];
-    cell.dataLabel.text = dateString;
+    cell.dataLabel.text    = dateString;
     cell.subjectLabel.text = object.subject;
-    cell.fromLabel.text = object.from;
+    cell.fromLabel.text    = object.from;
 }
 
 #pragma mark - model operations methods
@@ -217,7 +213,11 @@
         [self loadBodyOperation];
     } fail: ^(NSError *fail) {
         [wSelf.refreshControl endRefreshing];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"") message:fail.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
+                                                        message:fail.localizedDescription
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
         [alert show];
     }];
 }
@@ -229,7 +229,11 @@
     [[AKModel sharedManager] loadBodyForMailsComplete: ^() {
         [wSelf.tableView reloadData];
     } fail: ^(NSError *fail) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"") message:fail.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
+                                                        message:fail.localizedDescription
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
         [alert show];
     }];
 }

@@ -49,6 +49,7 @@ NSString * const FetchFullMessageKey = @"FetchFullMessageEnabled";
     _email = [[NSUserDefaults standardUserDefaults] stringForKey:UsernameKey];
     self.emailTextField.text = _email;
     self.passwordTextField.text = [[FXKeychain defaultKeychain] objectForKey:PasswordKey];
+    
     NSString *hostName = [[NSUserDefaults standardUserDefaults] stringForKey:HostnameKey];
     if (hostName) {
         self.hostnameTextField.text = hostName;

@@ -261,24 +261,27 @@
 - (void)saveNewMailArrayToDB:(NSArray *)msgArray
 {
         // add
+    NSUInteger counter = [msgArray count];
     
     [self.privatManagedObjectContext performBlock: ^{
-        for (int i = 0; i < [msgArray count]; i++) {
+        for (NSUInteger i = 0; i < counter; i++) {
             @autoreleasepool {
                 MCOIMAPMessage *msg = [msgArray objectAtIndex:i];
                 
                 NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
-                AKMailMessage *mailMessage = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:self.privatManagedObjectContext];
+                AKMailMessage *mailMessage = [NSEntityDescription insertNewObjectForEntityForName:[entity name]
+                                                                           inManagedObjectContext:self.privatManagedObjectContext];
                 
-                mailMessage.from = msg.header.sender.displayName;
-                mailMessage.subject = msg.header.subject;
-                mailMessage.uid =  [NSNumber numberWithUnsignedInt:[msg uid]];
+                mailMessage.from        = msg.header.sender.displayName;
+                mailMessage.subject     = msg.header.subject;
+                mailMessage.uid         = @([msg uid]);
                 mailMessage.recivedData = msg.header.receivedDate;
                 NSLog(@"description %@", msg.header.description);
             }
         }
         
         [self.privatManagedObjectContext save:nil];
+        
         dispatch_sync(dispatch_get_main_queue(), ^{
             NSLog(@"Done write test: Saving parent");
             [self.managedObjectContext save:nil];

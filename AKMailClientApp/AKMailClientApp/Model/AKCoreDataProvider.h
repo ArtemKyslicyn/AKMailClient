@@ -16,15 +16,16 @@
 
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
-- (void)saveNewMailArrayToDB:(NSArray*)msgArray;
+- (void)saveNewMailArrayToDB:(NSArray *)msgArray;
 - (BOOL)isMailMessagesPresentInDB;
 - (NSInteger)countOfMailsInCoreData;
-- (AKMailMessage*)getMessageForManagedID:(NSManagedObjectID*)uid;
+- (AKMailMessage *)getMessageForManagedID:(NSManagedObjectID *)uid;
 - (void)removeAllMailInDB;
-- (NSArray*)arrayOfMailsInCoreData;
+- (NSArray *)arrayOfMailsInCoreData;
 
 @end

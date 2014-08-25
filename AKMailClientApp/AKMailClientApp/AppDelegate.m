@@ -14,7 +14,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-        // Override point for customization after application launch.
     UISplitViewController *splitViewController   = (UISplitViewController *)self.window.rootViewController;
     UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
     splitViewController.delegate = (id)navigationController.topViewController;
@@ -24,7 +23,6 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-        //Saves changes in the application's managed object context before the application terminates.
         //[self saveContext];
     [[AKModel sharedManager].dataSource saveContext];
 }
