@@ -15,4 +15,5 @@
     #import <Foundation/Foundation.h>
     #import <CoreData/CoreData.h>
     #import "AKModel.h"
+    #import "MailCore/MailCore.h"
 #endif

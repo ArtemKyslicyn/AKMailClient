@@ -7,31 +7,34 @@
 //
 
 #import "AKMailListViewController.h"
-#import "AKModel.h"
-#import "AKMailDetailViewController.h"
 #import "AKCoreDataProvider.h"
-#import "AKMailMessage.h"
 #import "AKMailCell.h"
+#import "AKMailDetailViewController.h"
+#import "AKMailMessage.h"
+#import "AKModel.h"
+
 
 @interface AKMailListViewController ()
-- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 
-@property (nonatomic,retain) NSFetchedResultsController *fetchedResultsController;
-@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-@property (strong, nonatomic) UIRefreshControl *refreshControl;
+@property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
+@property (nonatomic, strong) NSManagedObjectContext     *managedObjectContext;
+@property (nonatomic, strong) UIRefreshControl           *refreshControl;
 
 @end
 
-@implementation AKMailListViewController
+
+@implementation AKMailListViewController;
 
 #pragma mark - Custom properties
 
--(NSFetchedResultsController*)fetchedResultsController{
+- (NSFetchedResultsController *)fetchedResultsController
+{
     NSFetchedResultsController *aFetchedResultsController = [[[AKModel sharedManager] dataSource] fetchedResultsController];
     return aFetchedResultsController;
 }
 
--(NSManagedObjectContext*)managedObjectContext{
+- (NSManagedObjectContext *)managedObjectContext
+{
     return [[[AKModel sharedManager] dataSource] managedObjectContext];
 }
 
@@ -46,27 +49,23 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+        // Do any additional setup after loading the view, typically from a nib.
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
-
     
     self.detailViewController = (AKMailDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     
     self.refreshControl = [[UIRefreshControl alloc] init];
-    
-    // Configure Refresh Control
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
     
-    // Configure View Controller
+        // Configure View Controller
     [self setRefreshControl:self.refreshControl];
     
     self.fetchedResultsController.delegate = self;
 }
 
--(void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
-    
-    
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(mergeChanges:)
@@ -79,38 +78,41 @@
                                                object:self.managedObjectContext];
 }
 
--(void)viewWillDisappear:(BOOL)animated{
+- (void)viewWillDisappear:(BOOL)animated
+{
     [super viewWillDisappear:animated];
     
     [[NSNotificationCenter defaultCenter] removeObserver:NSManagedObjectContextWillSaveNotification];
     [[NSNotificationCenter defaultCenter] removeObserver:NSManagedObjectContextDidSaveNotification];
-    
 }
-
 
 #pragma mark - Table View
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return [[self.fetchedResultsController sections] count];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
     id <NSFetchedResultsSectionInfo> sectionInfo = [self.fetchedResultsController sections][section];
     return [sectionInfo numberOfObjects];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-    [self configureCell:cell atIndexPath:indexPath];
+    [self configureCell:(AKMailCell*)cell atIndexPath:indexPath];
     return cell;
 }
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath{
-    // Return NO if you do not want the specified item to be editable.
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
     return YES;
 }
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
         [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
@@ -119,34 +121,31 @@
         if (![context save:&error]) {
             NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         }
-    }   
+    }
 }
 
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath{
-    // The table view should not be re-orderable.
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+{
     return NO;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
     AKMailMessage *object = [[self fetchedResultsController] objectAtIndexPath:indexPath];
     self.detailViewController.messageItem = object;
-    
 }
-
 
 #pragma mark - Fetched results controller
 
-- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller{
-    
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller
+{
     [self.tableView beginUpdates];
-
 }
 
-- (void)controller:(NSFetchedResultsController *)controller didChangeSection:(id <NSFetchedResultsSectionInfo>)sectionInfo
-           atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type{
-  
-    switch(type) {
+- (void)controller:(NSFetchedResultsController *)controller didChangeSection:(id <NSFetchedResultsSectionInfo> )sectionInfo
+           atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type
+{
+    switch (type) {
         case NSFetchedResultsChangeInsert:
             [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
             break;
@@ -155,15 +154,16 @@
             [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
             break;
     }
-    
 }
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject
-       atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type
-      newIndexPath:(NSIndexPath *)newIndexPath{
+                                                                atIndexPath:(NSIndexPath *)indexPath
+                                                              forChangeType:(NSFetchedResultsChangeType)type
+                                                               newIndexPath:(NSIndexPath *)newIndexPath
+{
     UITableView *tableView = self.tableView;
     
-    switch(type) {
+    switch (type) {
         case NSFetchedResultsChangeInsert:
             [tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
             break;
@@ -173,7 +173,7 @@
             break;
             
         case NSFetchedResultsChangeUpdate:
-            [self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
+            [self configureCell:(AKMailCell*)[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
             break;
             
         case NSFetchedResultsChangeMove:
@@ -183,73 +183,72 @@
     }
 }
 
-- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller{
-    
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller
+{
     [self.tableView endUpdates];
-
 }
 
-
-
-- (void)configureCell:(AKMailCell *)cell atIndexPath:(NSIndexPath *)indexPath{
-    
+- (void)configureCell:(AKMailCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
     AKMailMessage *object = [self.fetchedResultsController objectAtIndexPath:indexPath];
     NSString *dateString = [NSDateFormatter localizedStringFromDate:object.recivedData
                                                           dateStyle:NSDateFormatterShortStyle
                                                           timeStyle:NSDateFormatterFullStyle];
-    cell.dataLabel.text = dateString;
+    cell.dataLabel.text    = dateString;
     cell.subjectLabel.text = object.subject;
-    cell.fromLabel.text = object.from;
-    
+    cell.fromLabel.text    = object.from;
 }
-
-
 
 #pragma mark - model operations methods
 
--(void)syncMailOperation{
+- (void)syncMailOperation
+{
+    __weak AKMailListViewController *wSelf = self;
     
-    __weak AKMailListViewController  * wSelf = self;
-    
-    [[AKModel sharedManager] syncInboxComplete:^(BOOL isNewMailRecived) {
+    [[AKModel sharedManager] syncInboxComplete: ^(BOOL isNewMailRecived) {
         if (!isNewMailRecived) {
             [wSelf.refreshControl endRefreshing];
             [wSelf.tableView reloadData];
         }
         [self loadBodyOperation];
-      
-    } fail:^(NSError *fail) {
-         [wSelf.refreshControl endRefreshing];
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error",@"") message:fail.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    } fail: ^(NSError *fail) {
+        [wSelf.refreshControl endRefreshing];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
+                                                        message:fail.localizedDescription
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
         [alert show];
     }];
-    
 }
 
--(void)loadBodyOperation{
-    __weak AKMailListViewController  * wSelf = self;
+- (void)loadBodyOperation
+{
+    __weak AKMailListViewController *wSelf = self;
     
-    [[AKModel sharedManager] loadBodyForMailsComplete:^() {
-  
+    [[AKModel sharedManager] loadBodyForMailsComplete: ^() {
         [wSelf.tableView reloadData];
-        
-    } fail:^(NSError *fail) {
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error",@"") message:fail.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    } fail: ^(NSError *fail) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"")
+                                                        message:fail.localizedDescription
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
         [alert show];
     }];
-    
 }
 
-//commit changes recived from Core Data
--(void)mergeChanges:(id)object{
-    
+    //commit changes recived from Core Data
+- (void)mergeChanges:(id)object
+{
     [self.refreshControl endRefreshing];
     [self.tableView reloadData];
 }
 
 #pragma mark - control Actions
 
--(void)refresh:(id)sender{
+- (void)refresh:(id)sender
+{
     [self syncMailOperation];
     [self loadBodyOperation];
 }

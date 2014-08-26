@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 Arcilite. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 
 #import "AppDelegate.h"
 
