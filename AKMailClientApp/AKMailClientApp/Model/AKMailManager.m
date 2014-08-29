@@ -97,6 +97,7 @@ static  NSString * const kMailCountKey         = @"kMailCountKey";
          }
      }
      else {
+         NSLog(@"Error downloading message headers:%@", error);
          failBlock(error);
      }
      }];

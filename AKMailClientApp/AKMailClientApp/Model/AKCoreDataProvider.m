@@ -284,7 +284,7 @@
         
         dispatch_sync(dispatch_get_main_queue(), ^{
             NSLog(@"Done write test: Saving parent");
-            [self.managedObjectContext save:nil];
+           [self.managedObjectContext save:nil];
         });
     }];
 }
