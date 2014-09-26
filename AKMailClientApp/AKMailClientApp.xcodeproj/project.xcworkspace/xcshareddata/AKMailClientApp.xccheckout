@@ -5,34 +5,34 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>A4B2C25B-7259-4DC7-AC8F-C63BECF97FB9</string>
+	<string>2A8E344C-EFE4-4064-991F-0B922814BFCB</string>
 	<key>IDESourceControlProjectName</key>
 	<string>AKMailClientApp</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>4AA1D9AF-37E7-4293-B620-B9AB2F955C8A</key>
-		<string>https://github.com/EvgenyKarkan/AKMailClient.git</string>
+		<key>AB895BBCE4EC1F0069D12046CF1F4371FB926791</key>
+		<string>https://github.com/ArtemKyslicyn/AKMailClient.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>AKMailClientApp/AKMailClientApp.xcodeproj/project.xcworkspace</string>
+	<string>AKMailClientApp/AKMailClientApp.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>4AA1D9AF-37E7-4293-B620-B9AB2F955C8A</key>
+		<key>AB895BBCE4EC1F0069D12046CF1F4371FB926791</key>
 		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/EvgenyKarkan/AKMailClient.git</string>
+	<string>https://github.com/ArtemKyslicyn/AKMailClient.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>4AA1D9AF-37E7-4293-B620-B9AB2F955C8A</string>
+	<string>AB895BBCE4EC1F0069D12046CF1F4371FB926791</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>4AA1D9AF-37E7-4293-B620-B9AB2F955C8A</string>
+			<string>AB895BBCE4EC1F0069D12046CF1F4371FB926791</string>
 			<key>IDESourceControlWCCName</key>
 			<string>AKMailClient</string>
 		</dict>
